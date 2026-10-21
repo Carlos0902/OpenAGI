@@ -1,0 +1,22 @@
+# Dependencies and generated application bundles
+node_modules/
+dist/
+web-dist/
+release/
+
+# Local configuration, credentials, state, caches and worktrees
+.openagi/
+.env
+.env.*
+!.env.example
+!.env.sample
+*.log
+
+# Local experiments and generated documents
+/tmp/
+/testProject/
+
+# OS and compiler metadata
+.DS_Store
+Thumbs.db
+*.tsbuildinfo

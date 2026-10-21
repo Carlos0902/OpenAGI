@@ -1,0 +1,27 @@
+{
+  "version": 2,
+  "providers": {
+    "primary": {
+      "type": "openai-compatible",
+      "baseURL": "https://YOUR_API_HOST/v1",
+      "apiKey": "YOUR_API_KEY",
+      "contextWindow": 128000,
+      "maxOutputTokens": 8192
+    }
+  },
+  "models": {
+    "heavy": {
+      "providerID": "primary",
+      "modelID": "YOUR_HEAVY_MODEL_ID"
+    },
+    "light": {
+      "providerID": "primary",
+      "modelID": "YOUR_LIGHT_MODEL_ID"
+    }
+  },
+  "jev": {
+    "type": "typesafe",
+    "apiKey": "YOUR_TYPESAFE_API_KEY",
+    "repairAttempts": 1
+  }
+}

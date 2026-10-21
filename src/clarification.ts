@@ -1,0 +1,13 @@
+import { z } from "zod";
+
+export const ClarificationPolicy = z.object({
+  decisionThreshold: z.number().min(0.5).max(1).default(0.8),
+  followupDecisionThreshold: z.number().min(0.5).max(1).default(0.95),
+}).refine(policy => policy.followupDecisionThreshold >= policy.decisionThreshold, "追加追问门槛不能低于首次提问门槛");
+export type ClarificationPolicy = z.infer<typeof ClarificationPolicy>;
+export const defaultClarificationPolicy = ClarificationPolicy.parse({});
+export const requirementProvenanceInstructions = `Requirement provenance is mandatory: only actual human messages and preserved human answers are confirmed user requests. Candidate proposals, generated descriptions, assumptions, archived items and reevaluateWhen are agent-authored material, never evidence of user approval. Never turn a hypothetical future trigger into an already-confirmed user preference. Write every reevaluateWhen as an explicit conditional (for example "If the user later requests touch input..."). Describe unrequested ideas as system suggestions, and distinguish observed code behavior from an assumed audience or platform. Do not claim "the user explicitly requested" without an actual supplied human statement supporting that exact claim.`;
+export const clarificationInstructions = `${requirementProvenanceInstructions} Ask ONLY for an unanswered decision that materially changes the core deliverable and cannot be handled by a conventional, reversible implementation default. Do not ask to fill every unknown field. Choose routine technical details, board dimensions, speed, color, code structure, tests and documentation yourself; list these as implementation assumptions, never as user-provided answers. Unrequested learning purpose, optional tutorials, extras and speculative future scope do not block delivering working software. When teaching is explicitly part of the core goal, include useful explanations without asking the user to reconfirm that goal. Use existing project conventions and the smallest useful implementation. Ask about incompatible core outcomes, necessary unavailable inputs or genuinely consequential/irreversible choices. Reuse actual human answers and project notes even if a question is rephrased. After an answer, refine the acceptance criteria and move toward execution; ask again only for a newly exposed critical blocker. Prefer zero questions; when necessary consolidate into one or two concrete questions and explain why the answer changes delivery.`;
+export function isBlockingQuestion(question: { answer?: string; blocking?: boolean }) {
+  return !question.answer && question.blocking !== false;
+}

@@ -1,0 +1,46 @@
+import { expect, sourceURL, story } from "../../storybook/playwright/story"
+
+story("shows question navigation shortcuts", async ({ mount, page }) => {
+  const component = await mount("app-current-session-surface--question-request")
+  const shortcut = await page.evaluate(() => (/Mac|iPhone|iPad|iPod/.test(navigator.platform) ? "⌘⏎" : "Ctrl+⏎"))
+  const next = component.getByRole("button", { name: "Next", exact: true })
+  await expect(next.locator('[data-slot="question-submit-shortcut"]')).toHaveText(shortcut)
+  await next.click()
+  await expect(component.getByRole("button", { name: "Submit", exact: true })).toContainText(shortcut)
+  const back = component.getByRole("button", { name: "Back", exact: true })
+  const backShortcut = await page.evaluate(() => (/Mac|iPhone|iPad|iPod/.test(navigator.platform) ? "⌘[" : "Alt+←"))
+  await expect(back).toHaveText("Back")
+  await back.hover()
+  await expect(page.getByRole("tooltip")).toContainText(backShortcut)
+  await page.keyboard.press(
+    await page.evaluate(() => (/Mac|iPhone|iPad|iPod/.test(navigator.platform) ? "Meta+[" : "Alt+ArrowLeft")),
+  )
+  await expect(next).toBeVisible()
+})
+
+story("workflow requests reuse the nonmodal native question dock and route choices and hidden input to their owner", async ({ mount, page }) => {
+  await mount("ui-line-comment--editor")
+  await page.evaluate(async fixture => {
+    const { mountWorkflowQuestionDock } = await import(fixture)
+    mountWorkflowQuestionDock()
+  }, sourceURL(new URL("./openagi-question-dock.fixture.tsx", import.meta.url)))
+  const root = page.getByTestId("workflow-question-fixture")
+  await expect(root.getByText("How should this task continue?", { exact: true })).toBeVisible()
+  await root.getByRole("button", { name: "Inspect conversation", exact: true }).click()
+  await expect(root.locator("output")).toHaveText("conversation-clicked")
+  await root.getByRole("button", { name: "Submit", exact: false }).click()
+  await expect(page.getByText("Choose an answer or enter your response before submitting.", { exact: true })).toBeVisible()
+  await expect(root.locator("output")).toHaveText("conversation-clicked")
+  await root.getByRole("radio", { name: "Save baseline", exact: true }).click()
+  await root.getByRole("button", { name: "Submit", exact: false }).click()
+  await expect(root.locator("output")).toHaveText("choice:save")
+  await expect(root.locator('[data-component="dock-prompt"]')).toHaveCount(0)
+  await root.getByRole("button", { name: "Request hidden key", exact: true }).click()
+  const key = root.getByLabel("Hidden credential", { exact: true })
+  await expect(key).toHaveAttribute("type", "password")
+  await key.fill("fixture-secret")
+  await key.press(await page.evaluate(() => /Mac/.test(navigator.platform) ? "Meta+Enter" : "Control+Enter"))
+  await expect(root.locator("output")).toHaveText("secret-received")
+  await expect(root.getByText("fixture-secret", { exact: false })).toHaveCount(0)
+  await expect(root.getByRole("textbox", { name: "Message composer", exact: true })).toBeVisible()
+})

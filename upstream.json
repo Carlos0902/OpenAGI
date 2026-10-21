@@ -1,0 +1,9 @@
+{
+  "repository": "https://github.com/anomalyco/opencode.git",
+  "ref": "v2",
+  "commit": "903ec2bb35379efc255e6331fe264dd057eb84e4",
+  "version": "2.0.26",
+  "source": "vendor/opencode",
+  "packageManager": "bun@1.4.2",
+  "lockfileSha256": "7b209139084379f99c8110ea3b33171229f945488b114bc7a0ce66c33961a3ba"
+}

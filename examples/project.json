@@ -1,0 +1,20 @@
+{
+  "name": "my-project",
+  "directory": ".",
+  "modules": ["function-finder", "performance-optimizer", "ui-designer"],
+  "context": {
+    "goal": "发现并完成最有价值的下一步产品改进",
+    "audience": "项目的主要用户，请替换为实际人群",
+    "constraints": "保持现有接口兼容，请补充时间、预算和技术约束"
+  },
+  "opencode": { "url": "http://127.0.0.1:4096", "timeoutMs": 900000 },
+  "models": {},
+  "validation": {
+    "requireChecks": true,
+    "checks": [
+      { "name": "typecheck", "command": "npm", "args": ["run", "typecheck"], "timeoutMs": 120000 },
+      { "name": "tests", "command": "npm", "args": ["test"], "timeoutMs": 120000 }
+    ]
+  },
+  "archiveNecessityBelow": 2
+}

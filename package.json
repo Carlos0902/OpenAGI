@@ -1,0 +1,43 @@
+{
+  "name": "openagi",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Project tutor, OpenCode v2 worker orchestration and independent acceptance",
+  "type": "module",
+  "exports": {
+    ".": "./dist/index.js"
+  },
+  "types": "./dist/index.d.ts",
+  "bin": {
+    "openagi": "dist/cli.js"
+  },
+  "scripts": {
+    "dev": "tsx src/cli.ts",
+    "start": "tsx src/cli.ts run",
+    "build": "npm run desktop:build",
+    "typecheck": "tsc --noEmit -p tsconfig.check.json",
+    "test": "tsx --test test/*.test.ts",
+    "check": "npm run typecheck && npm test",
+    "desktop": "electron .",
+    "desktop:package": "npm run desktop:build && node --import tsx node_modules/electron-builder/cli.js --dir --mac --config desktop-upstream-builder.mjs",
+    "upstream:prepare": "node scripts/upstream-prepare.mjs",
+    "build:core": "tsc -p tsconfig.json",
+    "desktop:build": "npm run build:core && node scripts/upstream-prepare.mjs build",
+    "upstream:check": "node scripts/upstream-check.mjs"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "dependencies": {
+    "undici": "^8.11.2",
+    "zod": "4.1.8"
+  },
+  "devDependencies": {
+    "@types/node": "24.12.2",
+    "electron": "^44.4.5",
+    "electron-builder": "^26.15.7",
+    "tsx": "4.20.6",
+    "typescript": "5.8.2"
+  },
+  "main": "vendor/opencode/packages/desktop/out/main/index.js"
+}
